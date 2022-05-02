@@ -1,15 +1,16 @@
 package com.example.nettyserver.serializer;
 
+import com.example.nettyserver.login.LoginRequestPacket;
+import com.example.nettyserver.login.LoginResponsePacket;
+import com.example.nettyserver.sendmessage.MessageRequestPacket;
+import com.example.nettyserver.sendmessage.MessageResponsePacket;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
-import org.omg.CORBA.PUBLIC_MEMBER;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.IntFunction;
 
-import static com.example.nettyserver.serializer.Command.LOGIN_REQUEST;
+import static com.example.nettyserver.serializer.Command.*;
 
 /**
  * @author admin
@@ -28,7 +29,10 @@ public class PacketCodeC {
 
     public PacketCodeC() {
         packetTypeMap = new HashMap<>();
-        packetTypeMap.put(LOGIN_REQUEST,LoginRequestPacket.class);
+        packetTypeMap.put(LOGIN_REQUEST, LoginRequestPacket.class);
+        packetTypeMap.put(LOGIN_RESPONSE, LoginResponsePacket.class);
+        packetTypeMap.put(MESSAGE_REQUEST, MessageRequestPacket.class);
+        packetTypeMap.put(MESSAGE_RESPONSE, MessageResponsePacket.class);
 
         serializerMap = new HashMap<>();
         JSONSerializer serializer = new JSONSerializer();
@@ -40,9 +44,7 @@ public class PacketCodeC {
      * @param packet
      * @return
      */
-    public ByteBuf encode(ChannelHandlerContext ctx,Packet packet) {
-        //创建ByteBuf对象
-        ByteBuf byteBuf = ctx.channel().alloc().ioBuffer();
+    public ByteBuf encode(ByteBuf byteBuf,Packet packet) {
 
         byte[] bytes = Serializer.DEFAULT.serialize(packet);
 

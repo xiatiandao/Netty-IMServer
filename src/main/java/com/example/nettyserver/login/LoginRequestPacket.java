@@ -1,5 +1,6 @@
-package com.example.nettyserver.serializer;
+package com.example.nettyserver.login;
 
+import com.example.nettyserver.serializer.Packet;
 import lombok.Data;
 
 import static com.example.nettyserver.serializer.Command.LOGIN_REQUEST;

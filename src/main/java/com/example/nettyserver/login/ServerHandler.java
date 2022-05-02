@@ -1,11 +1,14 @@
 package com.example.nettyserver.login;
 
-import com.example.nettyserver.serializer.LoginRequestPacket;
+import com.example.nettyserver.sendmessage.MessageRequestPacket;
+import com.example.nettyserver.sendmessage.MessageResponsePacket;
 import com.example.nettyserver.serializer.Packet;
 import com.example.nettyserver.serializer.PacketCodeC;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+
+import java.util.Date;
 
 /**
  * @author admin
@@ -38,10 +41,19 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
             }
 
             //编码
-            ByteBuf responseByteBuf = PacketCodeC.INSTANCE.encode(ctx, loginRequestPacket);
+            ByteBuf responseByteBuf = PacketCodeC.INSTANCE.encode(ctx.channel().alloc().ioBuffer(), loginRequestPacket);
 
             ctx.channel().writeAndFlush(responseByteBuf);
 
+        }else if (packet instanceof MessageRequestPacket){
+            MessageRequestPacket messageRequestPacket = (MessageRequestPacket) packet;
+            System.out.println(new Date() + " : 收到客户端消息 : " + messageRequestPacket.getMessage());
+
+            MessageResponsePacket responsePacket = new MessageResponsePacket();
+
+            responsePacket.setMessage("服务端回复 : [ " + messageRequestPacket.getMessage() + " ] ");
+            ByteBuf responseByteBuf = PacketCodeC.INSTANCE.encode(ctx.channel().alloc().ioBuffer(), responsePacket);
+            ctx.channel().writeAndFlush(responseByteBuf);
         }
     }
 
